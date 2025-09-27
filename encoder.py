@@ -24,3 +24,4 @@ class Encoder:
         
         # TODO: make implementation for other error correction level
         self.error_correction_level = "M" # 15% of data is recovered
+        
