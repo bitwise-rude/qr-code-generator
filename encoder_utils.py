@@ -18,12 +18,27 @@ def _encode_numeric_type(data:str) -> str:
     groups = [data[i:i+3] for i in range(0,len(data),3)]
     
     # converting each group into binary
-    groups_in_binary = [bin(int(i))[2:] for i in groups]    
-    return "".join(groups_in_binary)
+    groups_in_binary = [bin(int(i))[2:] for i in groups]  
+    
+    return groups_in_binary
 
 def _encode_alphanumeric_type(data:str) -> str:
     '''Encodes numeric data by the rules'''
-    print("A")
+    
+    # breaking the string into pair
+    pairs = [data[i:i+2] for i in range(0,len(data),2)]
+    
+    pairs_in_binary = []
+
+    for pair in pairs:
+        if len(pair) ==2:
+              pairs_in_binary.append(bin(constants.ALPHA_NUMERIC.index(pair[0]) * 45 + constants.ALPHA_NUMERIC.index(pair[1]))[2:].zfill(11))
+        else:
+             pairs_in_binary.append(bin(constants.ALPHA_NUMERIC.index(pair))[2:].zfill(6))
+    
+    return pairs_in_binary
+              
+
     
 
 encode_data = {""
