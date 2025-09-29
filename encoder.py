@@ -1,4 +1,5 @@
 import constants
+from encoder_utils import * 
 
 class Encoder:
     '''Manages the encoding of the input to respective correct data type '''
@@ -26,22 +27,10 @@ class Encoder:
         # TODO: make implementation for other error correction level
         self.error_correction_level = "M" # 15% of data is recovered
 
-        self.best_version = self.determine_smallest_version()
-        print(self.best_version)
+        self.best_version = determine_smallest_version(self.data,self.error_correction_level,self.encoding_type)
+        
 
     
-    def determine_smallest_version(self):
-        '''Determines the  smallest version of QR Code needed'''
-        self.data_len = len(self.data)
-
-        for version in constants.STORAGE_CAPACITIES.keys():
-            for level in constants.STORAGE_CAPACITIES[version].keys():
-                if constants.STORAGE_CAPACITIES[version][level][self.encoding_type] >= self.data_len:
-                    best_version = version
-                    break
-            else:
-                raise NotImplementedError("Cannot Encode this input, It has exceed the maximum characters that can be encoded.")
-        return best_version
 
 
         

@@ -34,3 +34,18 @@ STORAGE_CAPACITIES = {
 
         }
     }
+
+# mode indicator
+MODE_INDICATOR = {
+    'numeric':"0001",
+    'alphanumeric':"0010",
+    "byte":"0100",
+}
+
+CHARACTER_COUNT = {
+    "1":{
+        'numeric':10,
+        'alphanumeric':9,
+        'byte':8,
+    }
+}
