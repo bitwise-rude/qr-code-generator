@@ -18,8 +18,20 @@ def _encode_numeric_type(data:str) -> str:
     groups = [data[i:i+3] for i in range(0,len(data),3)]
     
     # converting each group into binary
-    groups_in_binary = [bin(int(i))[2:] for i in groups]  
-    
+    groups_in_binary = []
+
+    for group_data in groups:
+        _ = (bin(int(group_data))[2:])
+
+        if len(group_data) == 1:
+         groups_in_binary.append(_.zfill(4))
+
+        elif len(group_data) == 2:
+         groups_in_binary.append(_.zfill(7))
+        
+        else:
+            groups_in_binary.append(_.zfill(10))
+                
     return groups_in_binary
 
 def _encode_alphanumeric_type(data:str) -> str:

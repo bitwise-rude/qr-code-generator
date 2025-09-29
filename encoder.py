@@ -33,7 +33,8 @@ class Encoder:
         self.character_count = bin(len(self.data))[2:].zfill(constants.CHARACTER_COUNT[self.best_version][self.encoding_type])# converting into binary and avoiding the 0bxxxxxx
 
         # main encoding part
-        encode_data[self.encoding_type](self.data)
+        encoded_data = encode_data[self.encoding_type](self.data)
+        print(encoded_data)
     
 
 
