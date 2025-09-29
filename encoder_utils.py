@@ -1,5 +1,5 @@
 # contains general function that an encoder needs
-import constants
+import constants,math
 
 def determine_smallest_version(data:str,level:str,encoding_type:str) -> str:
         '''Determines the  smallest version of QR Code needed'''
@@ -70,6 +70,26 @@ def get_terminator(version:str,error_level:str,data:str)-> str:
     terminator_size = min(4, remaining_bits)
 
     return "0" * terminator_size
+
+def get_padded_string(string:str,error_level:str,version:str)-> str:
+        ''' Returns a padding string to make a multiple of 8 and adds remaning pad bytes'''
+        total_number_of_bits = constants.TOTAL_NUMBERS_CODEWORDS[version+"-"+error_level] * 8
+
+        until_multiple_8 = (8*math.ceil(len(string) / 8)) - len(string)
+        string += "0"*until_multiple_8
+
+        remaining_padding_iteration = (total_number_of_bits - len(string)) // 8
+
+        string+="".join([constants.PADDINGS[(0 if i%2==0 else 1)] for i in range(0,remaining_padding_iteration)])
+
+        return string
+
+
+
+
+
+
+
 
 encode_data = {""
      'numeric':_encode_numeric_type,

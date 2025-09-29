@@ -39,7 +39,10 @@ class Encoder:
         # terminate with max 0000
         terminator = get_terminator(data=final_string,version=best_version,error_level=self.error_correction_level)
         final_string = final_string + terminator
-        print(len(final_string))
+        
+        # pad with multiple of 8 and padding element
+        final_padded_string = get_padded_string(final_string,self.error_correction_level,best_version)
+        print(final_padded_string)
 
         
         
