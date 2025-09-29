@@ -28,8 +28,12 @@ class Encoder:
         self.error_correction_level = "M" # 15% of data is recovered
 
         self.best_version = determine_smallest_version(self.data,self.error_correction_level,self.encoding_type)
-        
 
+        self.mode_indicator = constants.MODE_INDICATOR[self.encoding_type]
+        self.character_count = bin(len(self.data))[2:].zfill(constants.CHARACTER_COUNT[self.best_version][self.encoding_type])# converting into binary and avoiding the 0bxxxxxx
+
+        # main encoding part
+        encode_data[self.encoding_type](self.data)
     
 
 
