@@ -1,5 +1,5 @@
 # contains general function that an encoder needs
-import constants,math
+import constants
 
 def determine_smallest_version(data:str,level:str,encoding_type:str) -> str:
         '''Determines the  smallest version of QR Code needed'''
@@ -23,7 +23,7 @@ def _encode_numeric_type(data:str) -> str:
     return groups_in_binary
 
 def _encode_alphanumeric_type(data:str) -> str:
-    '''Encodes numeric data by the rules'''
+    '''Encodes alphanumeric data by the rules'''
     
     # breaking the string into pair
     pairs = [data[i:i+2] for i in range(0,len(data),2)]
@@ -38,10 +38,17 @@ def _encode_alphanumeric_type(data:str) -> str:
     
     return pairs_in_binary
               
+def _encode_byte(data:str) -> str:
+    '''Encodes byte data by the rules'''
+    data_utf8 = data.encode(errors="ignore") # encoding into UTF-8
+    data_bytes = [bin(i)[2:].zfill(8) for i in data_utf8] # each byte into its binary
 
+    return data_bytes
+    
     
 
 encode_data = {""
      'numeric':_encode_numeric_type,
      'alphanumeric':_encode_alphanumeric_type,
+     'byte':_encode_byte
 }
