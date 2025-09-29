@@ -25,17 +25,24 @@ class Encoder:
             raise NotImplementedError("Not implemented for this type")
         
         # TODO: make implementation for other error correction level
-        self.error_correction_level = "M" # 15% of data is recovered
+        self.error_correction_level = "Q" # 15% of data is recovered
 
-        self.best_version = determine_smallest_version(self.data,self.error_correction_level,self.encoding_type)
+        best_version = determine_smallest_version(self.data,self.error_correction_level,self.encoding_type)
 
-        self.mode_indicator = constants.MODE_INDICATOR[self.encoding_type]
-        self.character_count = bin(len(self.data))[2:].zfill(constants.CHARACTER_COUNT[self.best_version][self.encoding_type])# converting into binary and avoiding the 0bxxxxxx
+        mode_indicator = constants.MODE_INDICATOR[self.encoding_type]
+        character_count = bin(len(self.data))[2:].zfill(constants.CHARACTER_COUNT[best_version][self.encoding_type])# converting into binary and avoiding the 0bxxxxxx
 
         # main encoding part
         encoded_data = encode_data[self.encoding_type](self.data)
-        print(encoded_data)
+        final_string = mode_indicator + character_count + encoded_data
     
+        # terminate with max 0000
+        terminator = get_terminator(data=final_string,version=best_version,error_level=self.error_correction_level)
+        final_string = final_string + terminator
+        print(len(final_string))
+
+        
+        
 
 
         

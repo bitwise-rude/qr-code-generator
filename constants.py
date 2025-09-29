@@ -49,3 +49,11 @@ CHARACTER_COUNT = {
         'byte':8,
     }
 }
+
+TOTAL_NUMBERS_CODEWORDS = {
+    "1-L":19,
+    "1-M":16,
+    "1-Q":13,
+    "1-H":9,
+    "2-L":34,
+}

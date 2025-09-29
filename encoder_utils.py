@@ -31,8 +31,8 @@ def _encode_numeric_type(data:str) -> str:
         
         else:
             groups_in_binary.append(_.zfill(10))
-                
-    return groups_in_binary
+
+    return "".join(groups_in_binary)
 
 def _encode_alphanumeric_type(data:str) -> str:
     '''Encodes alphanumeric data by the rules'''
@@ -48,16 +48,28 @@ def _encode_alphanumeric_type(data:str) -> str:
         else:
              pairs_in_binary.append(bin(constants.ALPHA_NUMERIC.index(pair))[2:].zfill(6))
     
-    return pairs_in_binary
+    return "".join(pairs_in_binary)
               
 def _encode_byte(data:str) -> str:
     '''Encodes byte data by the rules'''
     data_utf8 = data.encode(errors="ignore") # encoding into UTF-8
     data_bytes = [bin(i)[2:].zfill(8) for i in data_utf8] # each byte into its binary
 
-    return data_bytes
+    return "".join(data_bytes)
     
+
+def get_terminator(version:str,error_level:str,data:str)-> str:
+    '''
+        Figures out the total number of required number of bits used as terminator
+        `data` needs to be the complete data
     
+    '''
+    total_number_of_bits = constants.TOTAL_NUMBERS_CODEWORDS[version+"-"+error_level] * 8
+    
+    remaining_bits = total_number_of_bits - len(data)
+    terminator_size = min(4, remaining_bits)
+
+    return "0" * terminator_size
 
 encode_data = {""
      'numeric':_encode_numeric_type,
