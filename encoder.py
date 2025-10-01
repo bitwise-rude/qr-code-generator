@@ -50,11 +50,8 @@ class Encoder:
         message_function = get_coefficients_from_data(final_padded_string)
 
         # generator function is tough to understand since of the galosis and stuff so be cautious
-        generator_function = rs_generator_poly(constants.EC_CODEWORD_PER_BLOCK[f'{best_version}-{self.error_correction_level}'])
-        print(message_function,generator_function)  
-
         # thonky steps
-        thonk = ThonkySteps.perfrom(message_function,generator_function)
+        thonk = ThonkySteps.perfrom(message_function,constants.EC_CODEWORD_PER_BLOCK[f'{best_version}-{self.error_correction_level}'])
 
         
         

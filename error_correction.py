@@ -37,13 +37,34 @@ def rs_generator_poly(nsym):
             g_next[j] ^= gf_mul(g[j], gf_pow(2, i))  # constant term
             g_next[j+1] ^= g[j]                      # x term
         g = g_next
+    return g
     
-    lead_coeff = 32
+
+def get_mul_coefficient_generator(g,lead_coeff):
     coeff = [gf_mul(c, lead_coeff) for c in g]
     coeff.reverse()
     return coeff
+ 
 
 
 class ThonkySteps:
-    def perfrom(message:list[int], generator:list[int]) -> None:
-        pass
+    ''' 
+        https://www.thonky.com/qr-code-tutorial/error-correction-coding#step-2-understand-polynomial-long-division 
+        use perfrom function to add data 
+        generator is assumed to have crossed the step 1a
+    '''
+    def perfrom(message:list[int],n:int) -> None:
+        # this is step_1b
+        # XORing everything
+        # print(len(message),len(generator))
+        going = len(message)
+        
+        stuff = rs_generator_poly(n)
+        leader = 32
+        for i in range(going):
+            got = (get_mul_coefficient_generator(stuff,leader))
+            message = [i^j for i,j in zip(message + [0]*(len(got) - len(message)),got+[0]*(len(message)-len(got)))]
+            message = message[1:]
+            leader = message[0]
+           
+        return message
