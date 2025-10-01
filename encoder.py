@@ -1,5 +1,6 @@
 import constants
 from encoder_utils import * 
+from error_correction import *
 
 class Encoder:
     '''Manages the encoding of the input to respective correct data type '''
@@ -25,7 +26,7 @@ class Encoder:
             raise NotImplementedError("Not implemented for this type")
         
         # TODO: make implementation for other error correction level
-        self.error_correction_level = "Q" # 15% of data is recovered
+        self.error_correction_level = "M" # 15% of data is recovered
 
         best_version = determine_smallest_version(self.data,self.error_correction_level,self.encoding_type)
 
@@ -42,7 +43,10 @@ class Encoder:
         
         # pad with multiple of 8 and padding element
         final_padded_string = get_padded_string(final_string,self.error_correction_level,best_version)
-        print(final_padded_string)
+        
+        ######## now doing the error correction part
+        string_bit_form = get_coefficients_from_data(final_padded_string)
+        print(string_bit_form)
 
         
         

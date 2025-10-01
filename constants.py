@@ -59,3 +59,11 @@ TOTAL_NUMBERS_CODEWORDS = {
 }
 
 PADDINGS= ["11101100","00010001"]
+
+EC_CODEWORD_PER_BLOCK = {
+    "1-L":7,
+    "1-M":10,
+    "1-Q":13,
+    "1-H":17,
+    "2-L":10
+}
