@@ -1,3 +1,5 @@
+# in this case encoder means everything except the pixel displayer, so error correction wrapper is also
+# present here
 import constants
 from encoder_utils import * 
 from error_correction import *
@@ -45,8 +47,14 @@ class Encoder:
         final_padded_string = get_padded_string(final_string,self.error_correction_level,best_version)
         
         ######## now doing the error correction part
-        string_bit_form = get_coefficients_from_data(final_padded_string)
-        print(string_bit_form)
+        message_function = get_coefficients_from_data(final_padded_string)
+
+        # generator function is tough to understand since of the galosis and stuff so be cautious
+        generator_function = rs_generator_poly(constants.EC_CODEWORD_PER_BLOCK[f'{best_version}-{self.error_correction_level}'])
+        print(message_function,generator_function)  
+
+        # thonky steps
+        thonk = ThonkySteps.perfrom(message_function,generator_function)
 
         
         
