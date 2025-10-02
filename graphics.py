@@ -5,8 +5,10 @@ class Renderer:
     WIDTH = 600
     BLOCK_SIZE = 20 # block means the individual square of a QR code, and size since it is a square
 
-    def __init__(self,qr_size:int):
-        self.size_qr= qr_size
+    def __init__(self,qr_version:int):
+        self.qr_version = qr_version
+
+        self.size_qr= (((self.qr_version-1)*4)+21)
 
         pygame.init()
         pygame.display.init()
@@ -16,10 +18,10 @@ class Renderer:
         self.screen.fill((20,255,20))
         pygame.display.update()
 
-        self.block_initial_y= (Renderer.HEIGHT - Renderer.BLOCK_SIZE *qr_size)//2 # placing the first block, in such way at the end the qr code will be in perfect center of teh screen
-        self.block_initial_x = (Renderer.WIDTH - Renderer.BLOCK_SIZE *qr_size)//2 # placing the first block, in such way at the end the qr code will be in perfect center of teh screen
+        self.block_initial_y= (Renderer.HEIGHT - Renderer.BLOCK_SIZE *self.size_qr)//2 # placing the first block, in such way at the end the qr code will be in perfect center of teh screen
+        self.block_initial_x = (Renderer.WIDTH - Renderer.BLOCK_SIZE *self.size_qr)//2 # placing the first block, in such way at the end the qr code will be in perfect center of teh screen
 
-        self.control_matrix = [[1 for _ in range(qr_size)] for _ in range(qr_size)]
+        self.control_matrix = [[1 for _ in range(self.size_qr)] for _ in range(self.size_qr)]
 
     def draw_functional_element(self):
         """Draw finder patterns (top-left, top-right, bottom-left)."""
