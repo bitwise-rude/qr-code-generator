@@ -1,9 +1,9 @@
-import pygame
+import pygame,constants
 
 class Renderer:
     HEIGHT = 600
     WIDTH = 600
-    BLOCK_SIZE = 20 # block means the individual square of a QR code, and size since it is a square
+    BLOCK_SIZE = 5 # block means the individual square of a QR code, and size since it is a square
 
     def __init__(self,qr_version:int):
         self.qr_version = qr_version
@@ -21,7 +21,7 @@ class Renderer:
         self.block_initial_y= (Renderer.HEIGHT - Renderer.BLOCK_SIZE *self.size_qr)//2 # placing the first block, in such way at the end the qr code will be in perfect center of teh screen
         self.block_initial_x = (Renderer.WIDTH - Renderer.BLOCK_SIZE *self.size_qr)//2 # placing the first block, in such way at the end the qr code will be in perfect center of teh screen
 
-        self.control_matrix = [[1 for _ in range(self.size_qr)] for _ in range(self.size_qr)]
+        self.control_matrix = [[.2 for _ in range(self.size_qr)] for _ in range(self.size_qr)]
 
     def draw_functional_element(self):
         """Draw finder patterns (top-left, top-right, bottom-left)."""
@@ -50,6 +50,39 @@ class Renderer:
                     
         print(self.control_matrix)
         self.fill_screen_with_matrix()
+
+        # now placing alignment pattern
+        if self.qr_version >= 2:
+    # Only for version up to 6 in your note, but can be extended
+            locations = constants.ALIGNMENT_PATTER_LOCATIONS[self.qr_version]
+
+            def place_alignment(center_row, center_col):
+                """Stamp a 5x5 alignment pattern centered at (center_row,center_col)."""
+                for i in range(-2, 3):   # -2..+2
+                    for j in range(-2, 3):
+                        r, c = center_row + i, center_col + j
+                        # outer border black
+                        if abs(i) == 2 or abs(j) == 2:
+                            self.control_matrix[r][c] = 0
+                        # center black
+                        elif i == 0 and j == 0:
+                            self.control_matrix[r][c] = 0
+                        else:
+                            self.control_matrix[r][c] = 1
+
+            # Place all alignment patterns
+            for r in locations:
+                for c in locations:
+                    # skip overlap with finder patterns (corners)
+                    if (r <= 6 and c <= 6) or (r <= 6 and c >= len(self.control_matrix)-7) or (r >= len(self.control_matrix)-7 and c <= 6):
+                        continue
+                    place_alignment(r, c)
+            
+            # place timing pattern
+            
+
+        self.fill_screen_with_matrix()
+
     
     def fill_screen_with_matrix(self):
         '''Fills the screen according to control matrix'''

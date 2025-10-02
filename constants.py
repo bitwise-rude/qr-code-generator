@@ -67,3 +67,8 @@ EC_CODEWORD_PER_BLOCK = {
     "1-H":17,
     "2-L":10
 }
+
+ALIGNMENT_PATTER_LOCATIONS ={
+    2: [6,18],
+    3: [6,22]
+}
