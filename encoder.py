@@ -4,6 +4,7 @@ import constants
 from encoder_utils import * 
 from error_correction import *
 
+
 class Encoder:
     '''Manages the encoding of the input to respective correct data type '''
     def choose_most_efficient_mode(data:str) -> "Encoder":
@@ -30,6 +31,7 @@ class Encoder:
         # TODO: make implementation for other error correction level
         self.error_correction_level = "M" # 15% of data is recovered
 
+    def encode(self) -> str:
         best_version = determine_smallest_version(self.data,self.error_correction_level,self.encoding_type)
 
         mode_indicator = constants.MODE_INDICATOR[self.encoding_type]
@@ -51,8 +53,13 @@ class Encoder:
 
         # generator function is tough to understand since of the galosis and stuff so be cautious
         # thonky steps
-        thonk = ThonkySteps.perfrom(message_function,constants.EC_CODEWORD_PER_BLOCK[f'{best_version}-{self.error_correction_level}'])
+        error_correction = ThonkySteps.perfrom(message_function,constants.EC_CODEWORD_PER_BLOCK[f'{best_version}-{self.error_correction_level}'])
+        
+        print(error_correction,final_padded_string)
 
+        ## logs
+        print(f'THE BEST VERSION IS {best_version}\n THE ERROR CORRECTION LEVEL IS {self.error_correction_level} \n THE ENCODING TYPE IS {self.encoding_type}')
+        return "1000100"
         
         
 
