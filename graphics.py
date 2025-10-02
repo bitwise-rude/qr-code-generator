@@ -27,17 +27,45 @@ class Renderer:
         """Draw finder patterns (top-left, top-right, bottom-left)."""
 
         def place_finder(top, left):
-            """Stamp a 7x7 finder pattern at (top,left)."""
+            """Stamp a 7x7 finder pattern at (top,left). and alos the separator"""
             for i in range(7):
                 for j in range(7):
                     # outer border
                     if i in (0,6) or j in (0,6):
                         self.control_matrix[top+i][left+j] = 0
+
                     # inner 3x3 black square
                     elif 2 <= i <= 4 and 2 <= j <= 4:
                         self.control_matrix[top+i][left+j] = 0
                     else:
                         self.control_matrix[top+i][left+j] = 1
+            
+            # separator
+            # top
+            if top - 1 >=0:
+                for i in range(8):
+                    self.control_matrix[top-1][left + i] = 1 
+            
+            # right
+            if left+7 < self.size_qr:
+                for i in range(7):
+                    self.control_matrix[top+i][left+7] = 1
+            
+            # bottom
+            if top + 7 < self.size_qr:
+                for i in range(7):
+                    self.control_matrix[top+7][left+i] = 1
+            
+                if  left-1 >=0: # only happens for right
+                    self.control_matrix[top+7][left-1] = 1
+                    for i in range(7):
+                        self.control_matrix[top+i][left-1] = 1
+
+                if left+7 <self.size_qr:
+                    self.control_matrix[top+7][left+7] = 1
+
+            
+
 
                 size = len(self.control_matrix)
 
@@ -79,7 +107,16 @@ class Renderer:
                     place_alignment(r, c)
             
             # place timing pattern
+            # 8th row  and 6th column is where it begins
+            color_mode = False
+            for i in range(8,self.size_qr-8): 
+                self.control_matrix[i][6] = 0 if not color_mode else 1 # verticle one
+                self.control_matrix[6][i] = 0 if not color_mode else 1 # horizontal one
+                color_mode = not color_mode
             
+            # adding the dark module
+            self.control_matrix[(4*self.qr_version)+9][8] = 0
+
 
         self.fill_screen_with_matrix()
 
@@ -90,11 +127,18 @@ class Renderer:
             for j in range(len(self.control_matrix[i])):
                 self.fill((j,i),self.control_matrix[i][j])
 
-    def fill(self,index:tuple[int,int],white_:bool) -> None:
+    def fill(self,index:tuple[int,int],white_:int) -> None:
         '''Fills the block at 'index' white_ or not_white'''
         # print(self.X(index[0]),self.Y(index[1]),Renderer.BLOCK_SIZE,Renderer.BLOCK_SIZE)
-
-        pygame.draw.rect(self.screen,((255,255,255) if white_ else (0,0,0)),(self.X(index[0]),self.Y(index[1]),Renderer.BLOCK_SIZE,Renderer.BLOCK_SIZE))
+        if white_==1:
+            color = (255,255,255)
+        elif white_ ==0:
+            color = (0,0,0)
+        elif white_ == 0.2:
+            color =(255,0,0)
+        elif white_ == 0.5:
+            color = (0,0,255) # indicated reserved area
+        pygame.draw.rect(self.screen,color,(self.X(index[0]),self.Y(index[1]),Renderer.BLOCK_SIZE,Renderer.BLOCK_SIZE))
         pygame.display.update()
 
     def X(self,i:int) -> int:

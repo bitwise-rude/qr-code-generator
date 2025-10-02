@@ -70,5 +70,6 @@ EC_CODEWORD_PER_BLOCK = {
 
 ALIGNMENT_PATTER_LOCATIONS ={
     2: [6,18],
-    3: [6,22]
+    3: [6,22],
+    
 }
