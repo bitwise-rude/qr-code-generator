@@ -33,7 +33,7 @@ class Encoder:
 
     def encode(self) -> str:
         best_version = determine_smallest_version(self.data,self.error_correction_level,self.encoding_type)
-
+        self.best_version =int( best_version)
         mode_indicator = constants.MODE_INDICATOR[self.encoding_type]
         character_count = bin(len(self.data))[2:].zfill(constants.CHARACTER_COUNT[best_version][self.encoding_type])# converting into binary and avoiding the 0bxxxxxx
 
@@ -59,7 +59,9 @@ class Encoder:
 
         ## logs
         print(f'THE BEST VERSION IS {best_version}\n THE ERROR CORRECTION LEVEL IS {self.error_correction_level} \n THE ENCODING TYPE IS {self.encoding_type}')
-        return "1000100"
+        ecc_bits = ''.join([bin(byte)[2:].zfill(8) for byte in error_correction])
+        full_bitstring = final_padded_string + ecc_bits
+        return full_bitstring
         
         
 

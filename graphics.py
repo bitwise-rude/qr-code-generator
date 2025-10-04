@@ -3,10 +3,11 @@ import pygame,constants
 class Renderer:
     HEIGHT = 600
     WIDTH = 600
-    BLOCK_SIZE = 5 # block means the individual square of a QR code, and size since it is a square
+    BLOCK_SIZE = 10 # block means the individual square of a QR code, and size since it is a square
 
-    def __init__(self,qr_version:int):
+    def __init__(self,qr_version:int,encoded_string):
         self.qr_version = qr_version
+        self.encoded_string = encoded_string
 
         self.size_qr= (((self.qr_version-1)*4)+21)
 
@@ -76,7 +77,6 @@ class Renderer:
 
         self.fill_screen_with_matrix()
                     
-        print(self.control_matrix)
         self.fill_screen_with_matrix()
 
         # now placing alignment pattern
@@ -117,7 +117,63 @@ class Renderer:
             # adding the dark module
             self.control_matrix[(4*self.qr_version)+9][8] = 0
 
+            # reserving fomrat specifiing area
+            size = self.size_qr
+            dark_r = (4*self.qr_version)+9
+            dark_c = 8
 
+            # Top-left horizontal (row 8)
+            for c in range(0, 9):
+                if c != 6:
+                    self.control_matrix[8][c] = -1
+
+            # Top-left vertical (column 8)
+            for r in range(0, 9):
+                if r != 6 and not (r == dark_r and 8 == dark_c):
+                    self.control_matrix[r][8] = -1
+
+            # Top-right horizontal (row 8)
+            for c in range(size - 8, size):
+                self.control_matrix[8][c] = -1
+
+            # Bottom-left vertical (column 8)
+            for r in range(size - 8, size):
+                if not (r == dark_r and 8 == dark_c):
+                    self.control_matrix[r][8] = -1
+
+        self.place_data_bits()
+        # self.fill_screen_with_matrix()
+    
+    def place_data_bits(self):
+            # get the bitstring
+        bitstring = self.encoded_string # already padded + ECC
+
+        size = self.size_qr
+        row = size - 1          # start at bottom
+        col = size - 1          # start at rightmost column
+        dir_up = True           # zig-zag direction
+
+        bit_index = 0
+
+        while col > 0:
+            if col == 6:  # skip vertical timing pattern column
+                col -= 1
+
+            for i in range(size):
+                r = row - i if dir_up else i
+
+                for c_offset in [0, -1]:  # 2-column block
+                    c = col + c_offset
+                    if self.control_matrix[r][c] == 0.2:  # only fill unreserved cells (0 for empty)
+                        if bit_index < len(bitstring):
+                            self.control_matrix[r][c] = int(bitstring[bit_index])
+                            bit_index += 1
+                        else:
+                            # fill remaining cells with 0 (optional, should not happen if padded properly)
+                            self.control_matrix[r][c] = 0
+
+            col -= 2
+            dir_up = not dir_up
         self.fill_screen_with_matrix()
 
     
@@ -136,7 +192,7 @@ class Renderer:
             color = (0,0,0)
         elif white_ == 0.2:
             color =(255,0,0)
-        elif white_ == 0.5:
+        elif white_ == -1:
             color = (0,0,255) # indicated reserved area
         pygame.draw.rect(self.screen,color,(self.X(index[0]),self.Y(index[1]),Renderer.BLOCK_SIZE,Renderer.BLOCK_SIZE))
         pygame.display.update()
