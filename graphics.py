@@ -83,7 +83,7 @@ class Renderer:
         if self.qr_version >= 2:
     # Only for version up to 6 in your note, but can be extended
             locations = constants.ALIGNMENT_PATTER_LOCATIONS[self.qr_version]
-
+            print(locations)
             def place_alignment(center_row, center_col):
                 """Stamp a 5x5 alignment pattern centered at (center_row,center_col)."""
                 for i in range(-2, 3):   # -2..+2
@@ -108,73 +108,70 @@ class Renderer:
             
             # place timing pattern
             # 8th row  and 6th column is where it begins
-            color_mode = False
-            for i in range(8,self.size_qr-8): 
+        color_mode = False
+        for i in range(8,self.size_qr-8): 
                 self.control_matrix[i][6] = 0 if not color_mode else 1 # verticle one
                 self.control_matrix[6][i] = 0 if not color_mode else 1 # horizontal one
                 color_mode = not color_mode
             
             # adding the dark module
-            self.control_matrix[(4*self.qr_version)+9][8] = 0
+        self.control_matrix[(4*self.qr_version)+9][8] = 0
 
             # reserving fomrat specifiing area
-            size = self.size_qr
-            dark_r = (4*self.qr_version)+9
-            dark_c = 8
+        size = self.size_qr
+        dark_r = (4*self.qr_version)+9
+        dark_c = 8
 
             # Top-left horizontal (row 8)
-            for c in range(0, 9):
+        for c in range(0, 9):
                 if c != 6:
                     self.control_matrix[8][c] = -1
 
             # Top-left vertical (column 8)
-            for r in range(0, 9):
+        for r in range(0, 9):
                 if r != 6 and not (r == dark_r and 8 == dark_c):
                     self.control_matrix[r][8] = -1
 
             # Top-right horizontal (row 8)
-            for c in range(size - 8, size):
+        for c in range(size - 8, size):
                 self.control_matrix[8][c] = -1
 
             # Bottom-left vertical (column 8)
-            for r in range(size - 8, size):
+        for r in range(size - 8, size):
                 if not (r == dark_r and 8 == dark_c):
                     self.control_matrix[r][8] = -1
 
         self.place_data_bits()
-        # self.fill_screen_with_matrix()
+        self.fill_screen_with_matrix()
+        
     
     def place_data_bits(self):
             # get the bitstring
-        bitstring = self.encoded_string # already padded + ECC
-
+        bitstring = self.encoded_string  # already padded + ECC
         size = self.size_qr
-        row = size - 1          # start at bottom
-        col = size - 1          # start at rightmost column
-        dir_up = True           # zig-zag direction
-
+        col = size - 1
+        dir_up = True
         bit_index = 0
 
         while col > 0:
-            if col == 6:  # skip vertical timing pattern column
+            if col == 6:  # skip vertical timing column
                 col -= 1
 
-            for i in range(size):
-                r = row - i if dir_up else i
+            # iterate rows depending on zig-zag direction
+            rows = range(size-1, -1, -1) if dir_up else range(size)
 
+            for r in rows:
                 for c_offset in [0, -1]:  # 2-column block
                     c = col + c_offset
-                    if self.control_matrix[r][c] == 0.2:  # only fill unreserved cells (0 for empty)
+                    if self.control_matrix[r][c] == 0.2:
                         if bit_index < len(bitstring):
                             self.control_matrix[r][c] = int(bitstring[bit_index])
                             bit_index += 1
-                        else:
-                            # fill remaining cells with 0 (optional, should not happen if padded properly)
-                            self.control_matrix[r][c] = 0
 
             col -= 2
             dir_up = not dir_up
-        self.fill_screen_with_matrix()
+        
+     
 
     
     def fill_screen_with_matrix(self):
@@ -192,7 +189,7 @@ class Renderer:
             color = (0,0,0)
         elif white_ == 0.2:
             color =(255,0,0)
-        elif white_ == -1:
+        else:
             color = (0,0,255) # indicated reserved area
         pygame.draw.rect(self.screen,color,(self.X(index[0]),self.Y(index[1]),Renderer.BLOCK_SIZE,Renderer.BLOCK_SIZE))
         pygame.display.update()

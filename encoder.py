@@ -61,6 +61,7 @@ class Encoder:
         print(f'THE BEST VERSION IS {best_version}\n THE ERROR CORRECTION LEVEL IS {self.error_correction_level} \n THE ENCODING TYPE IS {self.encoding_type}')
         ecc_bits = ''.join([bin(byte)[2:].zfill(8) for byte in error_correction])
         full_bitstring = final_padded_string + ecc_bits
+        print(len(full_bitstring))
         return full_bitstring
         
         
